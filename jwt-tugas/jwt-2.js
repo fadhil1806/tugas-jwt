@@ -26,9 +26,9 @@ function createToken(data) {
     }
 }
 
-function verifyToken(data) {
+function verifyToken(token) {
     try {
-        const decoded = jwt.verify(data, API_KEY)
+        const decoded = jwt.verify(token, API_KEY)
         delete decoded.iat
         return decoded
     }

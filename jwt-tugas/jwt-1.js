@@ -1,14 +1,7 @@
 const jwt = require('jsonwebtoken')
 const API_KEY = 'liburan';
 
-const data = {
-    nama: "Fadhil Rabbani", 
-    alamat: "Tangerang", 
-    contact: {
-        mail: "fadhil8637@smk.belajar.id",
-        telephone: 8692212
-    }
-}
+
 
 function createToken(data) {
     try {
@@ -30,4 +23,4 @@ function verifyToken(token) {
     }
 }
 
-console.log(verifyToken(createToken(data)))
+
