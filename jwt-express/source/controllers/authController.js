@@ -22,17 +22,17 @@ async function register(req, res) {
         }
     
         try {
-            const {body} = req
-            const result = await registerUser(body)
+            const result = await registerUser(req.body)
+            console.log(result)
 
             if(result.status)  return response(res, 201, {status: result.status, message: result.message})
             else response(res, 409, {status: result.status, message: result.message})
         }
 
         catch(error) {
-            return response(res, 500, {status: false, message: error})
+          console.log(error)
+          return response(res, 500, {status: false, message: 'interval server error'})
         }
-    
 }
 
 async function login(req, res) {

@@ -9,8 +9,10 @@ async function registerUser(data) {
         const {name, username, email, password} = data;
 
         //check data of database;
-        const isValidUsername = await getDataUsername(username)
-        
+        const isValidUsername = await users.findOne({
+            where: {username: username}
+        })
+
         const isValidEmail = await users.findOne({ 
             where: {email: email}
         });
@@ -38,7 +40,7 @@ async function registerUser(data) {
         
     }
     catch(error) {                         
-        throw new Error
+        throw new Error(error)
     }
 }
 
