@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken')
-const { createJobs, updateJob, destoryJob } = require('../../models/todos');
-const responseHelpers = require('../../helpers/response');
-const jobs = require('../tables/jobs');
+const { createJobs, updateJob, destoryJob } = require('../models/todos');
+const responseHelpers = require('../helpers/response');
+const jobs = require('../db/tables/jobs');
+const runValidation = require('../helpers/runValidation');
+const { body, validationResult } = require("express-validator");
 require('dotenv').config()
 
 async function getJobs(req, res) {
@@ -13,14 +15,35 @@ async function getJobs(req, res) {
         return responseHelpers(res, 500, {message: 'internal server erorr'})
     }
 }
+
+async function getJobByID(req, res) {
+    try {
+        const  id  = req.params.id
+        const data = await jobs.findOne({where: {id: id}, attributes: {exclude: ['createdAt', 'updatedAt']}})
+        if(data == null) return responseHelpers(res, 404, {status: false, message: 'Data cannot be found'})
+        responseHelpers(res, 200, data)
+    }
+    catch(error) {
+        console.log(error)
+        return responseHelpers(res, 500, {message: 'internal server erorr'})
+    }
+}
 async function addJobs(req, res) {
+    const {title, description} = req.body
+
+    const validation = [
+        body("title").notEmpty().withMessage("Title is required"),
+        body("description").notEmpty().withMessage("Description is required"),
+    ];
+
+    const validationErrors = await runValidation(validation, { title, description });
+    if (validationErrors) return { status: false, message: 'Validation errors', error: validationErrors };
+    
     try {
         const token = req.headers.authorization;
-        const isValid = jwt.verify(token, process.env.API_KEY);
-        console.log(isValid)
-        const status = await createJobs(isValid.id, req.body)
-        console.log(status)
-
+        const decoded = jwt.verify(token, process.env.API_KEY);
+        await createJobs(decoded.id, req.body)
+        
         return responseHelpers(res, 201, {message: 'created jobs'})
     }
     catch {
@@ -57,4 +80,4 @@ async function deleteJob(req, res) {
     }
 }
 
-module.exports = {addJobs, changeJobs, deleteJob, getJobs}
+module.exports = {addJobs, changeJobs, deleteJob, getJobs, getJobByID}

@@ -6,8 +6,9 @@ const bp = require('body-parser')
 
 const generateRandomId = require('./source/helpers/generateRandomId')
 const users = require('./source/db/tables/users');
-const { login } = require('./source/db/controllers/authControllers');
-const { addJobs, changeJobs, deleteJob, getJobs } = require('./source/db/controllers/todos');
+const { login } = require('./source/controllers/authControllers');
+const { addJobs, changeJobs, deleteJob, getJobs, getJobByID } = require('./source/controllers/todos');
+const verifyToken = require('./source/middleware/verifyToken');
 
 app.use(bp.json())
 app.use(bp.urlencoded({extended: true}))
@@ -59,8 +60,9 @@ app.post('/register', async(req, res) => {
 })
 
 //end-point jobs
+app.get('/data/jobs/:id', getJobByID)
 app.get('/data/jobs', getJobs)
-app.post('/add/job', addJobs)
+app.post('/add/job', verifyToken, addJobs)
 app.post('/update/job/:id', changeJobs)
 app.post('/delete/job/:id', deleteJob)
 

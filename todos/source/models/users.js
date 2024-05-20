@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 async function loginUser(data) {
     
     const {username, password} = data
+    
     //check username of database
     const isValidUsername =  await users.findOne({
         where: {username: username}

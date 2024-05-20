@@ -24,7 +24,7 @@ const users = sequelize.define('users', {
     }
 }, {
     tableName: 'users',
-    freezeTableName: false
+    freezeTableName: false,
 })
 
 module.exports = users
